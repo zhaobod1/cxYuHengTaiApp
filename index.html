@@ -1,16 +1,210 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-    <title></title>
-    <script src="js/mui.min.js"></script>
-    <link href="css/mui.min.css" rel="stylesheet"/>
-    <script type="text/javascript" charset="utf-8">
-      	mui.init();
-    </script>
-</head>
-<body>
-	
-</body>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="js/mui.min.js"></script>
+		<script src="js/lazyload.img.js" type="text/javascript" charset="utf-8"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+			.mui-content img {
+				width: 50px;
+			}
+		</style>
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+			var base64files = []; //保持数据
+			function plusReady() {
+				// 用户侧滑返回时关闭显示的图片
+				plus.webview.currentWebview().addEventListener("popGesture", function(e) {
+					if(e.type == "start") {
+						closeImg();
+					}
+				}, false);
+
+				var self = plus.webview.currentWebview();
+				// 或 var self = plus.webview.getWebviewById('index');
+				var paths = self.files;
+				for(var i in paths) {
+					plus.io.resolveLocalFileSystemURL(paths[i], function(entry) {
+						var localURL = entry.toLocalURL();
+						//document.getElementById('resImg').src = localURL;
+						generateUrl(localURL);
+					}, function(e) {
+						console.log("失败：" + error.message);
+					}, {
+						filename: "_doc/camera/",
+						index: 1
+					});
+
+				}
+
+			}
+
+			document.addEventListener('plusready', plusReady, false);
+
+			function generateUrl(path) {
+
+				var img = new Image();
+				img.src = path; // 传过来的图片路径在这里用。
+				img.onload = function() {
+					var that = this;
+					//生成比例 
+					var w = that.width,
+						h = that.height,
+						scale = w / h;
+					w = 480 || w; //480  你想压缩到多大，改这里
+					h = w / scale;
+
+					//生成canvas
+					var canvas = document.createElement('canvas');
+
+					var ctx = canvas.getContext('2d');
+
+					$(canvas).attr({
+						width: w,
+						height: h
+					});
+
+					ctx.drawImage(that, 0, 0, w, h);
+
+					var base64 = canvas.toDataURL('image/jpeg', 1 || 0.8); //1最清晰，越低越模糊。有一点不清楚这里明明设置的是jpeg。弹出 base64 开头的一段 data：image/png;却是png。哎开心就好，开心就好
+					//              alert(base64);      
+
+					//					var strFileName = path.replace(/^.+?\\([^\\]+?)(\.[^\.\\]*?)?$/gi, "$1"); //正则表达式获取文件名，不带后缀
+					var arrUrls = path.split('/');
+					var strFileName = arrUrls[arrUrls.length - 1];
+					var FileExt = path.replace(/.+\./, ""); //正则表达式获取后缀
+
+					var data = {
+						src: base64,
+						name: strFileName,
+						suffix: FileExt,
+						id: 0
+					};
+
+					base64files.push(data);
+					var filesLength = base64files.length;
+					if(filesLength == 1) {
+						data.id = 1;
+					} else {
+						data.id = filesLength - 1;
+					}
+					showImg(data)
+				}
+
+			}
+
+			function showImg(data) {
+				//mui-table-view-cell
+				var clone = $("#huo15li").clone();
+				clone.find("img").attr("src", data.src).css("height", "100px");
+				clone.find(".picName").text(data.name + data.suffix);
+				clone.attr("huo15ID", data.id)
+				clone.find(".huo15-tmp-btn").attr("huo15Id", data.id);
+				clone.removeClass("mui-hidden");
+				$(".mui-grid-view").append(clone);
+
+			}
+
+			function closeImg() {
+				var trnode = document.getElementById("imgShow");
+				trnode && trnode.parentNode.removeChild(trnode);
+			}
+
+			function deleteLi(btn) {
+				$(btn).attr("disabled", "disabled");
+				var lis = $(btn).parents(".mui-table-view-cell");
+				var huo15ID = lis.attr("huo15ID");
+
+				$(btn).parents(".mui-table-view-cell").remove();
+				base64files = base64files.splice(huo15ID, 1);
+			}
+
+			// 上传文件
+			function upload() {
+
+				if(base64files.length == 0) {
+					alert("请先选择图片");
+					return;
+				}
+				var wt = plus.nativeUI.showWaiting();
+				var url = 'http://h5.huo15.com/cx/huo15/upload.php';
+				var dataType = 'json';
+				//发送数据  
+				var data = {
+					base64files: base64files //base64数据        
+				};
+				$.post(url, data, h15success, dataType);
+			}
+			//成功响应的回调函数
+			var h15success = function(response) {
+				plus.nativeUI.closeWaiting();
+				if(response.flag == 1) {
+					alert("上传成功");
+					$(".mui-table-view-cell").each(function(index, el) {
+						if(index > 0) {
+							$(el).remove();
+						}
+					});
+					base64files = null;
+					var datas = response.datas;
+					for (var i in datas) {
+						$("#huo15ul").append('<li class="mui-table-view-cell">'+datas[i]+'</li>');
+					}
+					$("#huo15ul").removeClass("mui-hidden");
+
+				} else {
+					alert(response)
+				}
+
+			}
+		</script>
+	</head>
+
+	<body>
+		<style>
+			.mui-content .mui-table-view .mui-table-view-cell .huo15-tmp-btn {
+				width: 20px;
+				height: 20px;
+				font-size: 18px;
+				line-height: 20px;
+				display: block;
+				text-align: center;
+				background: #007AFF;
+				color: #fff;
+				border-radius: 10px;
+				position: absolute;
+				right: 0px;
+				top: 10px;
+			}
+		</style>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">火一五信息科技图片处理</h1>
+		</header>
+		<div class="mui-content">
+			<ul class="mui-table-view mui-grid-view">
+				<li class="mui-table-view-cell mui-media mui-col-xs-6 mui-hidden" id="huo15li" huo15ID="0">
+					<a href="#">
+						<img class="mui-media-object" data-lazyload="http://placehold.it/400x300">
+						<div class="mui-media-body">
+							<span onclick="deleteLi(this)" huo15ID="" class="huo15-tmp-btn">×</span>
+							<span class="picName"></span>
+						</div>
+					</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view mui-hidden" id="huo15ul">
+
+			</ul>
+			<button onclick="upload()" type="button" class="mui-btn mui-btn-blue mui-btn-block">上传</button>
+
+		</div>
+
+	</body>
+
 </html>

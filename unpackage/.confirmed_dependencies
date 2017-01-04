@@ -1,0 +1,12 @@
+{
+  "index.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "js/jquery.js",
+      "js/lrz.mobile.min.js",
+      "js/lazyload.img.js"
+    ]
+  }
+}
