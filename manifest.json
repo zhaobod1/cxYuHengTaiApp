@@ -1,7 +1,7 @@
 {
 	"@platforms": ["android", "iPhone", "iPad"],
-	"id": "H58E56EB0",/*应用的标识，创建应用时自动生成，勿手动修改*/
-	"name": "火一五信息科技",/*应用名称，程序桌面图标名称*/
+	"id": "H567F2B75",/*应用的标识，创建应用时自动生成，勿手动修改*/
+	"name": "钰恒泰",/*应用名称，程序桌面图标名称*/
 	"version": {
 		"name": "1.0.0",/*应用版本名称*/
 		"code": "83"
@@ -10,7 +10,7 @@
 	"icons": {
 		"72": "icon.png"
 	},
-	"launch_path": "http://h5.huo15.com/cx",/*应用的入口页面，默认为根目录下的index.html；支持网络地址，必须以http://或https://开头*/
+	"launch_path": "http://m.yhengtai.com/and",/*应用的入口页面，默认为根目录下的index.html；支持网络地址，必须以http://或https://开头*/
 	"developer": {
 		"name": "",/*开发者名称*/
 		"email": "",/*开发者邮箱地址*/
@@ -179,11 +179,11 @@
 					}
 				},
 				"android": {
-					"mdpi": "", /*普通屏启动图片，分辨率：240x282*/
-					"ldpi": "", /*大屏启动图片，分辨率：320x442*/
-					"hdpi": "", /*高分屏启动图片，分辨率：480x762*/
-					"xhdpi": "", /*720P高分屏启动图片，分辨率：720x1242*/
-					"xxhdpi": ""
+					"mdpi": "/www/work/2016年客户/钰恒泰/240X282.png", /*普通屏启动图片，分辨率：240x282*/
+					"ldpi": "/www/work/2016年客户/钰恒泰/320X442.png", /*大屏启动图片，分辨率：320x442*/
+					"hdpi": "/www/work/2016年客户/钰恒泰/480X762.png", /*高分屏启动图片，分辨率：480x762*/
+					"xhdpi": "/www/work/2016年客户/钰恒泰/720X1242.png", /*720P高分屏启动图片，分辨率：720x1242*/
+					"xxhdpi": "/www/work/2016年客户/钰恒泰/1080X1882.png"
 				}
 			}
 		}
@@ -219,6 +219,19 @@
 					"css/mui.min.css"
 				],
 				"refer": [],
+				"priority": 0
+			},
+			"multiple.html": {
+				"resources": [
+					"js/common.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css"
+				],
+				"refer": [
+					"index.html"
+				],
 				"priority": 0
 			}
 		},

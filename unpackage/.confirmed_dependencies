@@ -28,5 +28,17 @@
       "css/mui.min.css"
     ],
     "refer": []
+  },
+  "multiple.html": {
+    "resources": [
+      "js/common.js",
+      "js/mui.min.js",
+      "css/common.css",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "index.html"
+    ]
   }
 }

@@ -16,17 +16,19 @@
 		</style>
 		<script type="text/javascript" charset="utf-8">
 			mui.init();
-			
-			
-			
+			var wdMultiple = null;
 			var base64files = []; //保持数据
 			function plusReady() {
+				wdMultiple = plus.webview.getWebviewById("multiple");
 				// 用户侧滑返回时关闭显示的图片
 				plus.webview.currentWebview().addEventListener("popGesture", function(e) {
 					if(e.type == "start") {
 						closeImg();
 					}
 				}, false);
+				$(".mui-icon-left-nav").click(function() {
+					window.location.href = wdMultiple.return_url;
+				});
 
 				var self = plus.webview.currentWebview();
 				// 或 var self = plus.webview.getWebviewById('index');
@@ -59,9 +61,12 @@
 					var w = that.width,
 						h = that.height,
 						scale = w / h;
-					w = 480 || w; //480  你想压缩到多大，改这里
-					h = w / scale;
+					w = (w / wdMultiple.ratio) ||480; //480  你想压缩到多大，改这里
+					if (wdMultiple.ratio) {
+						h = h /  wdMultiple.ratio;
 
+					}
+					
 					//生成canvas
 					var canvas = document.createElement('canvas');
 
@@ -135,7 +140,7 @@
 					return;
 				}
 				var wt = plus.nativeUI.showWaiting();
-				var url = 'http://h5.huo15.com/cx/huo15/upload.php';
+				var url = wdMultiple.notify_url;
 				var dataType = 'json';
 				//发送数据  
 				var data = {
@@ -147,18 +152,24 @@
 			var h15success = function(response) {
 				plus.nativeUI.closeWaiting();
 				if(response.flag == 1) {
-					alert("上传成功");
-					$(".mui-table-view-cell").each(function(index, el) {
-						if(index > 0) {
-							$(el).remove();
+					if(confirm("上传成功")) {
+						$(".mui-table-view-cell").each(function(index, el) {
+							if(index > 0) {
+								$(el).remove();
+							}
+						});
+						base64files = null;
+						var datas = response.datas;
+						/*
+						for(var i in datas) {
+							$("#huo15ul").append('<li class="mui-table-view-cell">' + datas[i] + '</li>');
 						}
-					});
-					base64files = null;
-					var datas = response.datas;
-					for (var i in datas) {
-						$("#huo15ul").append('<li class="mui-table-view-cell">'+datas[i]+'</li>');
+						$("#huo15ul").removeClass("mui-hidden");
+						*/
+						
+						var ws = plus.webview.create(wdMultiple.return_url, 'picCallback');
+						ws.show();
 					}
-					$("#huo15ul").removeClass("mui-hidden");
 
 				} else {
 					alert(response)
@@ -186,8 +197,8 @@
 			}
 		</style>
 		<header class="mui-bar mui-bar-nav">
-			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-			<h1 class="mui-title">火一五信息科技图片处理</h1>
+			<a class="mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">钰恒泰图片处理</h1>
 		</header>
 		<div class="mui-content">
 			<ul class="mui-table-view mui-grid-view">

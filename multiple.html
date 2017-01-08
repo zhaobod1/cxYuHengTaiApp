@@ -6,7 +6,7 @@
 		<title></title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="css/mui.min.css" rel="stylesheet" />
-		<link rel="stylesheet" type="text/css" href="css/common.css"/>
+		<link rel="stylesheet" type="text/css" href="css/common.css" />
 		<script src="js/common.js" type="text/javascript" charset="utf-8"></script>
 		<style type="text/css">
 			.aname {
@@ -34,10 +34,13 @@
 		<script src="js/mui.min.js"></script>
 		<script type="text/javascript">
 			mui.init();
-var lfs = null; // 保留上次选择图片列表
-	var list = null,
+			var lfs = null; // 保留上次选择图片列表
+			var list = null,
 				first = null;
+			var currWebView = null;
 			function plusReady() {
+				currWebView = plus.webview.getWebviewById("multiple");
+				console.log("currWebView:"+currWebView.domain);
 				// 用户侧滑返回时关闭显示的图片
 				plus.webview.currentWebview().addEventListener("popGesture", function(e) {
 					if(e.type == "start") {
@@ -68,10 +71,9 @@ var lfs = null; // 保留上次选择图片列表
 				});
 			}
 
-			
 			function galleryImgsSelected() {
 				// 从相册中选择图片
-				outSet("从相册中选择多张图片(限定最多选择3张):");
+				outSet("从相册中选择多张图片(限定最多选择100张):");
 				plus.gallery.pick(function(e) {
 					lfs = e.files;
 					for(var i in e.files) {
@@ -128,7 +130,6 @@ var lfs = null; // 保留上次选择图片列表
 				trnode && trnode.parentNode.removeChild(trnode);
 			}
 
-		
 			document.addEventListener("DOMContentLoaded", function() {
 				list = document.getElementById("list");
 				first = document.getElementById("empty");
@@ -167,11 +168,11 @@ var lfs = null; // 保留上次选择图片列表
 
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-			<h1 class="mui-title">火一五信息科技有限公司</h1>
+			<h1 class="mui-title">钰恒泰</h1>
 		</header>
 		<div id="dcontent" class="dcontent">
 			<br/>
-			<div class="button" onclick="galleryImgsSelected()">从相册中多选图片(保存勾选记录)</div>
+			<div style="display: none;" class="button" onclick="galleryImgsSelected()">从相册中多选图片(保存勾选记录)</div>
 			<br/>
 
 		</div>
